@@ -8,26 +8,28 @@ class Game extends Component {
           history: [{
             squares: Array(9).fill(null),
           }],
-          xIsNext: true
+          xIsNext: true,
+          stepNumber: 0,
         };
     }
 
     handleClick(i) {
-      const history = this.state.history;
-      const current = history[history.length - 1];
+      const history = this.state.history.slice(0, this.state.stepNumber + 1);
+      const current = history[this.state.stepNumber];
       const squares = [...current.squares];
+
       if (this.calculateWinner(squares) || squares[i]) {
         return;
       }
+
       squares[i] = this.state.xIsNext ? 'X' : 'O';
       this.setState({
         history: history.concat([{
           squares: squares,
         }]),
         xIsNext: !this.state.xIsNext,
+        stepNumber: history.length,
       });
-
-      console.log(history)
     }
 
     calculateWinner(squares) {
@@ -54,11 +56,32 @@ class Game extends Component {
       return winner ? 'Winner: ' + winner : 'Next player: ' + (xIsNext ? 'X' : 'O');
     }
 
+    getMoves(history) {
+      return history.map((step, move) => {
+        const desc = move ?
+          'Go to move #' + move :
+          'Go to game start';
+        return (
+          <li key={move} >
+            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          </li>
+        );
+      });
+    }
+
+    jumpTo(step) {
+      this.setState({
+        stepNumber: step,
+        xIsNext: (step % 2) === 0,
+      });
+    }
+
     render() {
       const history = this.state.history;
-      const current = history[history.length - 1];
-      const winner = this.calculateWinner(current.squares);
-      const status = this.getStatus(winner, this.state.xIsNext);
+      const current = history[this.state.stepNumber];
+      const winner  = this.calculateWinner(current.squares);
+      const status  = this.getStatus(winner, this.state.xIsNext);
+      const moves   = this.getMoves(history);
 
       return (
         <div className="game">
@@ -70,7 +93,7 @@ class Game extends Component {
           </div>
           <div className="game-info">
             <div>{status}</div>
-            <ol>{/* TODO */}</ol>
+            <ol>{moves}</ol>
           </div>
         </div>
       );

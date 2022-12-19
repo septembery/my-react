@@ -1,0 +1,18 @@
+[
+    {
+		"eng": "Hello World!",
+		"pol": "Witaj Świecie!",
+		"example": {
+			"eng": "My first Hello World! application in React",
+			"pol": "Moja pierwsza aplikacja typu Hello w React"
+		}
+	},
+    {
+        "eng": "example-1",
+		"pol": "przykład-1",
+		"example": {
+			"eng": "This is only an example",
+			"pol": "To jest tylko przykład"
+		}
+    }
+]

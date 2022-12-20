@@ -1,8 +1,7 @@
 export interface ActionButtonProps {
     label: string,
     handleClick: (event?: React.MouseEvent<HTMLElement>) => void;
-  }
-
+}
 
 function ActionButton(props: ActionButtonProps) {
     const label = props.label;

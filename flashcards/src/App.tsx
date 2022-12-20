@@ -35,7 +35,7 @@ class App extends Component<
 
   handleForwardClick() {
     this.setState((state) => {
-      console.log(state.history)
+      if (state.progress < 1)
       return {
         history: [...state.history, state.index],
         index: this.getRandom(0, this.wordList.length - 1),

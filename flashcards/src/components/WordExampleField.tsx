@@ -1,7 +1,9 @@
-function WordExampleField(props: {text: string | undefined}) {
-    return (
-        <div><p>{props.text}</p></div>
-    );
+function WordExampleField(props: { text: string | undefined }) {
+  return (
+    <div>
+      <p>{props.text}</p>
+    </div>
+  )
 }
- 
-export default WordExampleField;
+
+export default WordExampleField

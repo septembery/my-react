@@ -9,23 +9,25 @@ class App extends Component<
     wordList: WordProps[]
   },
   {
-    history: number[],
     index: number,
+    progress: number,
+    history: number[],
     toRemind: number[],
-    progress: number
   }>
 {
   wordList: WordProps[];
+  initialState = {
+    index: 0,
+    progress: 0,
+    history: [],
+    toRemind: [],
+  }
 
   constructor(props: any) {
       super(props);
+
       this.wordList = props.wordList;
-      this.state = {
-          history: [],
-          index: 0,
-          toRemind: [],
-          progress: 0
-      };
+      this.state = structuredClone(this.initialState);
 
       this.handleRemindClick  = this.handleRemindClick.bind(this);
       this.handleForwardClick = this.handleForwardClick.bind(this);
@@ -34,7 +36,7 @@ class App extends Component<
 
   handleForwardClick() {
     this.setState((state) => {
-      if(this.state.progress < 1) {
+      if (this.state.progress < 1) {
         const index = this.getRandom(state.history, 0, this.wordList.length - 1);
         const progress = this.incrementProgress(this.wordList.length);
 
@@ -60,12 +62,7 @@ class App extends Component<
 
   handleRestartClick() {
     this.setState(() => {
-      return {
-        history: [],
-        index: 0,
-        toRemind: [],
-        progress: 0
-      };
+      return this.initialState;
     });
   }
 

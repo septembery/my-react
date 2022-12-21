@@ -3,6 +3,7 @@ import ProgressIndicator from './components/ProgressIndicator/ProgressIndicator'
 import ActionButton from './components/ActionButton'
 import WordsArea from './components/WordsArea'
 import { WordProps } from './types/WordProps'
+import { getRandom, incrementProgress } from './App.utils'
 
 class App extends Component<
   {
@@ -24,7 +25,7 @@ class App extends Component<
     this.maxIndex = props.wordList.length - 1
 
     this.state = {
-      index: this.getRandom([], 0, this.maxIndex),
+      index: 0,
       progress: 0,
       history: [],
       toRemind: [],
@@ -35,9 +36,13 @@ class App extends Component<
     this.handleRestartClick = this.handleRestartClick.bind(this)
   }
 
+  componentDidMount(): void {
+    this.setInitalState()
+  }
+
   setInitalState() {
-    const index = this.getRandom([], 0, this.maxIndex)
-    const progress = this.incrementProgress(0, this.maxIndex)
+    const index = getRandom([], 0, this.maxIndex)
+    const progress = 0
     const history = [index]
     const toRemind: number[] = []
 
@@ -52,10 +57,10 @@ class App extends Component<
   handleForwardClick() {
     this.setState(state => {
       if (this.state.progress < 1) {
-        const index = this.getRandom(state.history, 0, this.maxIndex)
-        const progress = this.incrementProgress(
+        const index = getRandom(state.history, 0, this.maxIndex)
+        const progress = incrementProgress(
           state.history.length + state.toRemind.length,
-          this.maxIndex
+          this.wordList.length
         )
 
         return {
@@ -79,28 +84,7 @@ class App extends Component<
   }
 
   handleRestartClick() {
-    this.setState({
-      index: this.getRandom([], 0, this.maxIndex),
-      progress: 0,
-      history: [],
-      toRemind: [],
-    })
-  }
-
-  getRandom(history: number[], min: number, max: number): number {
-    const randomNumber = Math.floor(Math.random() * (max - min + 1) + min)
-    if (!history.includes(randomNumber)) {
-      return randomNumber
-    }
-
-    return this.getRandom(history, min, max)
-  }
-
-  incrementProgress(counter: number, length: number): number {
-    // let counter = this.state.history.length + this.state.toRemind.length;
-    const progress = length > counter ? counter++ / length : 1
-
-    return progress
+    this.setInitalState()
   }
 
   render() {

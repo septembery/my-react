@@ -16,29 +16,48 @@ class App extends Component<
   }>
 {
   wordList: WordProps[];
-  initialState = {
-    index: 0,
-    progress: 0,
-    history: [],
-    toRemind: [],
-  }
 
   constructor(props: any) {
       super(props);
-
       this.wordList = props.wordList;
-      this.state = structuredClone(this.initialState);
+
+      this.state = {
+        index: this.getRandom([], 0, this.wordList.length - 1),
+        progress: 0,
+        history: [],
+        toRemind: [],
+      };
 
       this.handleRemindClick  = this.handleRemindClick.bind(this);
       this.handleForwardClick = this.handleForwardClick.bind(this);
       this.handleRestartClick = this.handleRestartClick.bind(this);
   }
 
+  setInitalState() {
+    const index = this.getRandom([], 0, this.wordList.length - 1);
+    const progress = this.incrementProgress(0, this.wordList.length - 1);
+    const history = [index];
+    const toRemind: number[] = [];
+    this.state = {
+      index,
+      progress,
+      history,
+      toRemind
+    }
+  }
+
   handleForwardClick() {
     this.setState((state) => {
       if (this.state.progress < 1) {
-        const index = this.getRandom(state.history, 0, this.wordList.length - 1);
-        const progress = this.incrementProgress(this.wordList.length);
+        const index = this.getRandom(
+          state.history,
+          0,
+          this.wordList.length - 1
+        );
+        const progress = this.incrementProgress(
+          state.history.length + state.toRemind.length,
+          this.wordList.length -1
+        );
 
         return {
           index,
@@ -61,9 +80,14 @@ class App extends Component<
   }
 
   handleRestartClick() {
-    this.setState(() => {
-      return this.initialState;
-    });
+    this.setState(
+      {
+        index: this.getRandom([], 0, this.wordList.length - 1),
+        progress: 0,
+        history: [],
+        toRemind: []
+      }
+    );
   }
 
   getRandom(history: number[], min: number, max: number): number {
@@ -75,9 +99,9 @@ class App extends Component<
       return this.getRandom(history, min, max);
   }
 
-  incrementProgress(length: number): number {
-    let counter = this.state.history.length + this.state.toRemind.length;
-    const progress = (length - 1 > counter) ? ++counter / length : 1;
+  incrementProgress(counter: number, length: number): number {
+    // let counter = this.state.history.length + this.state.toRemind.length;
+    const progress = (length > counter) ? counter++ / length : 1;
 
     return progress;
   }

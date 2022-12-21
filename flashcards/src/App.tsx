@@ -16,13 +16,15 @@ class App extends Component<
   }
 > {
   wordList: WordProps[]
+  maxIndex: number
 
   constructor(props: any) {
     super(props)
     this.wordList = props.wordList
+    this.maxIndex = props.wordList.length - 1
 
     this.state = {
-      index: this.getRandom([], 0, this.wordList.length - 1),
+      index: this.getRandom([], 0, this.maxIndex),
       progress: 0,
       history: [],
       toRemind: [],
@@ -34,8 +36,8 @@ class App extends Component<
   }
 
   setInitalState() {
-    const index = this.getRandom([], 0, this.wordList.length - 1)
-    const progress = this.incrementProgress(0, this.wordList.length - 1)
+    const index = this.getRandom([], 0, this.maxIndex)
+    const progress = this.incrementProgress(0, this.maxIndex)
     const history = [index]
     const toRemind: number[] = []
 
@@ -50,10 +52,10 @@ class App extends Component<
   handleForwardClick() {
     this.setState(state => {
       if (this.state.progress < 1) {
-        const index = this.getRandom(state.history, 0, this.wordList.length - 1)
+        const index = this.getRandom(state.history, 0, this.maxIndex)
         const progress = this.incrementProgress(
           state.history.length + state.toRemind.length,
-          this.wordList.length - 1
+          this.maxIndex
         )
 
         return {
@@ -78,7 +80,7 @@ class App extends Component<
 
   handleRestartClick() {
     this.setState({
-      index: this.getRandom([], 0, this.wordList.length - 1),
+      index: this.getRandom([], 0, this.maxIndex),
       progress: 0,
       history: [],
       toRemind: [],

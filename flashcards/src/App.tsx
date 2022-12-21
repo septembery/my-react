@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import ProgressIndicator from './components/ProgressIndicator'
+import ProgressIndicator from './components/ProgressIndicator/ProgressIndicator'
 import ActionButton from './components/ActionButton';
 import WordsArea from './components/WordsArea';
-
 import { WordProps } from './types/WordProps';
-import { runInThisContext } from 'vm';
 
 class App extends Component<
   {
@@ -29,19 +27,24 @@ class App extends Component<
           progress: 0
       };
 
+      this.handleRemindClick  = this.handleRemindClick.bind(this);
       this.handleForwardClick = this.handleForwardClick.bind(this);
-      this.handleRemindClick = this.handleRemindClick.bind(this);
+      this.handleRestartClick = this.handleRestartClick.bind(this);
   }
 
   handleForwardClick() {
     this.setState((state) => {
-      if (state.progress < 1)
-      return {
-        history: [...state.history, state.index],
-        index: this.getRandom(0, this.wordList.length - 1),
-        toRemind: state.toRemind,
-        progress: this.incrementProgress(this.wordList.length)
-      };
+      if(this.state.progress < 1) {
+        const index = this.getRandom(state.history, 0, this.wordList.length - 1);
+        const progress = this.incrementProgress(this.wordList.length);
+
+        return {
+          index,
+          progress,
+          toRemind: state.toRemind,
+          history: [...state.history, index]
+        };
+      }
     });
   }
 
@@ -55,22 +58,31 @@ class App extends Component<
     // });
   }
 
-  getRandom(min: number, max: number): number {
-    const randomNumber = Math.floor(Math.random() * (max - min + 1) + min);
+  handleRestartClick() {
+    this.setState(() => {
+      return {
+        history: [],
+        index: 0,
+        toRemind: [],
+        progress: 0
+      };
+    });
+  }
 
-    console.log(this.state.history.includes(randomNumber))
-    console.log(randomNumber)
+  getRandom(history: number[], min: number, max: number): number {
+      const randomNumber = Math.floor(Math.random() * (max - min + 1) + min);
+      if ( ! history.includes(randomNumber)) { 
+        return randomNumber;
+      }
 
-    if (this.state.history.includes(randomNumber)) { this.getRandom(min, max) }
-
-    
-
-    return randomNumber;
+      return this.getRandom(history, min, max);
   }
 
   incrementProgress(length: number): number {
-    const counter = this.state.history.length + this.state.toRemind.length;
-    return (length - 1 > counter) ? counter + 1 / length : 1;
+    let counter = this.state.history.length + this.state.toRemind.length;
+    const progress = (length - 1 > counter) ? ++counter / length : 1;
+
+    return progress;
   }
 
   render() {
@@ -79,6 +91,7 @@ class App extends Component<
         <WordsArea word={this.wordList[this.state.index]} />
         <ActionButton label='OK' handleClick={this.handleForwardClick} />
         <ActionButton label='remind' handleClick={this.handleRemindClick} />
+        <ActionButton label='restart' handleClick={this.handleRestartClick} />
         <ProgressIndicator progress={this.state.progress} />
       </>
     );

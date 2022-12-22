@@ -9,5 +9,8 @@ export const getRandom = (history: number[], min: number, max: number): number =
 }
 
 export const incrementProgress = (counter: number, length: number): number  => {
-  return length >= counter ? ++counter / length : 1
+  const progress = (length - 1) > counter ? counter / length : 1;
+  counter++;
+
+  return progress;
 }
